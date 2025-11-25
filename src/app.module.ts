@@ -10,6 +10,7 @@ import { EmployeeModule } from './employee/employee.module';
 import { LineupModule } from './lineup/lineup.module';
 import { RecruitModule } from './recruit/recruit.module';
 import { PayrollModule } from './payroll/payroll.module';
+import { ReviewFilterModule } from './reviewFilter/reviewFilter.module';
 
 
 @Module({
@@ -25,7 +26,7 @@ import { PayrollModule } from './payroll/payroll.module';
         dbName: configService.get<string>('DATABASE_NAME')
       }),
     }),
-    AuthModule, EmployeeModule, LineupModule, RecruitModule, PayrollModule],
+    AuthModule, EmployeeModule, LineupModule, RecruitModule, PayrollModule, ReviewFilterModule],
   controllers: [AppController],
   providers: [AppService],
 })
