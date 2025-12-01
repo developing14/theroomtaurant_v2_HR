@@ -30,17 +30,12 @@ export class AccountService {
     return this.accountModel.findById(id);
   }
 
-  findOneByLoginName(loginName: string) {
-    return this.accountModel.findOne({loginName:loginName});
-  }
-
   findOneByEmail(email: string) {
     return this.accountModel.findOne({email: email});
   }
 
-  async isExisted(identifier:any):Promise<null | string>{
-    if (await this.findOneByLoginName(identifier)) return 'Login Name is used'
-    if (await this.findOneByEmail(identifier)) return 'Email is used'
+  async isExisted(email:any):Promise<null | string>{
+    if (await this.findOneByEmail(email)) return 'Email is used'
       
     return null
   }
@@ -69,19 +64,19 @@ export class AuthService {
     ) {}
 
     // Login
-    async authenticate(loginName:string, password:string){
-        const target = await this.accountService.findOneByLoginName(loginName)
+    async authenticate(email:string, password:string){
+        const target = await this.accountService.findOneByEmail(email)
 
         if (!target) throw new NotFoundException('Account not found')
         
         const isMatched = bcrypt.compareSync(password, target.password)
         if (!isMatched) throw new UnauthorizedException('Wrong password')
 
-        const isDeletedd = target.isDeleted
+        const isDeleted = target.isDeleted
         
-        if (isDeletedd) throw new ForbiddenException('Account is not activated')
+        if (isDeleted) throw new ForbiddenException('Account is not activated')
 
-        const payload = { sub: target._id, loginName: target.loginName };
+        const payload = { sub: target._id, email: target.email };
 
         return this.JwtService.signAsync(payload, {secret: this.ConfigService.get<string>('MYSECRET')})
     }
@@ -95,10 +90,8 @@ export class AuthService {
 
     //Sign up
     async signup(payload:any){
-        const loginName = payload.loginName
         const email = payload.email
 
-        this.accountService.isExisted(loginName)
         this.accountService.isExisted(email)
 
         this.accountService.create(payload)

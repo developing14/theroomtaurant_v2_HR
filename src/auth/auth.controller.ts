@@ -15,12 +15,12 @@ export class AuthController {
 
     @Post('login')
     async login(@Req() req:Request, @Res() res:Response){
-        const loginName = req.body?.loginName
+        const email = req.body?.email
         const password = req.body?.password
 
-        if (!loginName || !password) throw new UnauthorizedException('Missing loginname or password')
+        if (!email || !password) throw new UnauthorizedException('Missing email or password')
         
-        const accessToken = await this.authService.authenticate(loginName, password)
+        const accessToken = await this.authService.authenticate(email, password)
         res.cookie('accessToken', accessToken)
 
         return res.send('Logged in')
@@ -40,7 +40,6 @@ export class AuthController {
         let error:any = await validate(newAccount)
         if (error.length > 0) throw new BadRequestException('Required field(s) is missing')
         
-        error = this.accountService.isExisted(newAccount.loginName)
         error = this.accountService.isExisted(newAccount.email)
         if (error.length > 0) throw new BadRequestException(error)
 

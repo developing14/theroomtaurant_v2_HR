@@ -5,7 +5,6 @@ export class Account {
 
     constructor(account?: Account){
          if (account){
-            this.loginName = account.loginName
             this.email = account.email
             this.password = account.password
             this.isDeleted = account.isDeleted
@@ -16,8 +15,6 @@ export class Account {
     @Prop({required: true, unique: true})
     email: string
 
-    @Prop({required: true, unique: true})
-    loginName: string
 
     @Prop({required: true})
     password: string
